@@ -1,0 +1,334 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.navbar {
+    background-color: #000000;
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 50px;
+    height: 80px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.orange-logo {
+    height: 50px; 
+    width: auto;
+    object-fit: contain;
+}
+.brand-text {
+    margin-right: 40px;
+}
+
+.brand-subtitle {
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: -0.5px;
+}
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+}
+.nav-links a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: bold;
+    position: relative;
+    padding: 28px 0; 
+}
+.nav-links a:hover{
+    color: #ff6600;
+}
+.nav-links a.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background-color: #ff6600; 
+}
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+.lang-select {
+    font-weight: bold;
+    color: #ff6600;
+    cursor: pointer;
+    font-size: 15px;
+}
+.user-icon {
+    background-color: #262626;
+    color: #ffffff;
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+}
+.page-header-container {
+    background-color: #d8d8d8;
+    padding: 30px 50px;      
+    width: 100%;
+}
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #000000;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 25px; 
+    transition: opacity 0.2s;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.back-link:hover {
+    opacity: 0.7; 
+}
+.title-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.main-title {
+    font-size: 32px;
+    font-weight: 800; 
+    color: #000000;
+    letter-spacing: -0.5px;
+}
+.like-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: transparent;
+    border: 1px solid #ff6600; 
+    color: #ff6600;            
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+.like-btn:hover {
+    background-color: #ff6600;
+    color: #ffffff; 
+}
+.content-section {
+    display: flex;
+    gap: 50px;           /* Espace entre la colonne d'icônes et la photo */
+    align-items: flex-start;
+}
+
+/* Colonne verticale pour les icônes de partage */
+.share-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;           /* Espace entre chaque icône */
+    padding-top: 20px;   /* Aligne légèrement vers le bas par rapport au haut de l'image */
+}
+
+/* Le lien/cercle autour de vos icônes images */
+.share-link {
+    width: 45px;
+    height: 45px;
+    border: 2px solid #424242; /* Bordure fine grise comme sur la capture */
+    border-radius: 50%;        /* Rend le contour parfaitement rond */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff; /* Fond blanc à l'intérieur du cercle */
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+/* Effet de survol léger sur les boutons de partage */
+.share-link:hover {
+    border-color: #000000;
+    transform: scale(1.05);   /* Grossit très légèrement au survol */
+}
+
+/* Taille de vos images d'icônes à l'intérieur des cercles */
+.social-icon {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;       /* Évite que l'icône soit déformée */
+}
+
+/* Conteneur de l'image principale pour la centrer correctement */
+.main-image-container {
+    flex: 1;                   /* Prend tout l'espace restant à droite */
+    max-width: 900px;          /* Limite la largeur maximale pour correspondre à la maquette */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Ombre très légère sous la photo */
+}
+
+/* La grande photo d'Orange Digital Center */
+.center-photo {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+#corps{
+    margin: 10px 15%;
+}
+.description-text {
+    font-size: 16px;
+    color: #000000;
+    line-height: 1.6;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-weight: normal;
+    text-align: center;
+}
+
+.orange-bold {
+    color: #ff6600;
+    font-weight: bold;
+}
+.second-photo{
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+.caption-text {
+    font-size: 13px;          /* Plus petit que le texte principal */
+    color: #333333;           /* Noir légèrement atténué */
+    margin-top: 12px;         /* Espace juste sous la photo */
+    margin-bottom: 20px;      /* Espace avant le paragraphe suivant */
+    line-height: 1.4;
+}
+
+/* Deuxième texte avec les statistiques */
+.stats-text {
+    font-size: 16px;          /* Taille standard lisible */
+    color: #000000;
+    line-height: 1.6;         /* Bon espacement entre les lignes */
+    margin-bottom: 30px;      /* Prépare l'espace pour le bloc suivant */
+}
+
+/* Classe générique pour mettre les éléments importants en gras noir profond */
+.bold-text {
+    font-weight: bold;
+    color: #000000;
+}
+#or{
+    padding-top: 20px;
+}
+.main-footer {
+    background-color: #000000;
+    color: #ffffff;
+    padding: 40px 50px 20px 50px;
+    width: 100%;
+}
+.footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #6c6c6c; 
+    padding-bottom: 30px;
+    margin-bottom: 20px;
+}
+.footer-socials {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.follow-us-text {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.footer-icons {
+    display: flex;
+    gap: 12px;
+}
+.footer-social-circle {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.footer-social-circle:hover {
+    background-color: #333333;
+}
+
+.social-icon-white {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    filter: invert(1); 
+}
+
+.scroll-to-top {
+    border: 1px solid #ffffff;
+    color: #ffffff;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.scroll-to-top:hover {
+    background-color: #ff6600; /* Devient orange au survol comme sur le style Orange */
+    border-color: #ff6600;
+}
+
+/* Ligne des copyrights tout en bas */
+.footer-bottom {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    font-size: 13px;
+    color: #ffffff;
+    padding-top: 10px;
+}
+
+.copyright {
+    font-weight: bold;
+}
+
+.footer-links {
+    display: flex;
+    list-style: none;
+    gap: 25px;
+}
+
+.footer-links a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s;
+}
+
+.footer-links a:hover {
+    color: #ff6600; /* Les liens s'allument en orange au survol */
+}
