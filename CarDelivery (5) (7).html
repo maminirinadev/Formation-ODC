@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>gestion de voiture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:wght@300;500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/1.119.0/iconfont/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0d0f;--bg2:#141418;--bg3:#1c1c22;--bg4:#242429;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#f0efe8;--text2:#9e9d97;--text3:#5e5d59;
+  --accent:#e8c96a;--accent2:#d4a829;
+  --blue:#5b9cf6;--blue-bg:rgba(91,156,246,0.12);
+  --green:#5ecb87;--green-bg:rgba(94,203,135,0.12);
+  --orange:#f0915a;--orange-bg:rgba(240,145,90,0.12);
+  --red:#e05f5f;--red-bg:rgba(224,95,95,0.12);
+  --purple:#c97df5;--purple-bg:rgba(201,125,245,0.12);
+  --teal:#2ecc71;
+  --font-head:'Fraunces',Georgia,serif;
+  --font-body:'DM Sans',sans-serif;
+  --font-mono:'DM Mono',monospace;
+  --r:10px;--r2:16px;
+}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;display:flex;font-size:14px;line-height:1.6}
+
+/* ── Sidebar ── */
+.sidebar{width:220px;min-width:220px;background:var(--bg2);border-right:.5px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar-logo{padding:20px 20px 16px;border-bottom:.5px solid var(--border)}
+.logo-icon{width:36px;height:36px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.logo-icon i{color:#0d0d0f;font-size:20px}
+.logo-title{font-family:var(--font-head);font-size:17px;font-weight:700}
+.logo-sub{font-size:10px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:1px}
+.sidebar-stats{padding:12px 16px;border-bottom:.5px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.mini-stat{background:var(--bg3);border-radius:8px;padding:8px 10px}
+.mini-stat .val{font-size:18px;font-weight:500;color:var(--accent);font-family:var(--font-mono);line-height:1}
+.mini-stat .lbl{font-size:9px;color:var(--text3);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+.sidebar-nav{padding:10px;flex:1}
+.nav-section-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;padding:8px 8px 3px}
+.nav-btn{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text2);font-size:13px;font-family:var(--font-body);transition:all .15s;border:none;background:none;width:100%;text-align:left}
+.nav-btn i{font-size:15px}
+.nav-btn:hover{background:var(--bg3);color:var(--text)}
+.nav-btn.active{background:rgba(232,201,106,.12);color:var(--accent)}
+.nav-btn .badge{margin-left:auto;background:var(--bg4);color:var(--text3);font-size:10px;padding:1px 6px;border-radius:10px;font-family:var(--font-mono)}
+.nav-btn.active .badge{background:rgba(232,201,106,.2);color:var(--accent)}
+
+/* ── Main ── */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow-x:hidden}
+.topbar{padding:14px 24px;border-bottom:.5px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--bg2);position:sticky;top:0;z-index:10}
+.topbar-title{font-family:var(--font-head);font-size:19px;font-weight:500;flex:1}
+.search-wrap{position:relative;flex:1;max-width:300px}
+.search-wrap i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:14px}
+.search-wrap input{width:100%;background:var(--bg3);border:.5px solid var(--border);border-radius:8px;padding:7px 12px 7px 32px;color:var(--text);font-size:13px;font-family:var(--font-body);outline:none}
+.search-wrap input::placeholder{color:var(--text3)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;font-size:13px;font-family:var(--font-body);cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--accent);color:#0d0d0f}
+.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{background:var(--bg3);color:var(--text2);border:.5px solid var(--border)}
+.btn-ghost:hover{background:var(--bg4);color:var(--text)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.content{padding:20px 24px;flex:1}
+
+/* ── KPI ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:20px}
+.kpi-card{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r2);padding:14px 16px}
+.kpi-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.kpi-value{font-size:24px;font-weight:500;font-family:var(--font-mono);line-height:1}
+.kpi-sub{font-size:10px;color:var(--text3);margin-top:3px}
+.kpi-card.kaccent .kpi-value{color:var(--accent)}
+.kpi-card.kblue .kpi-value{color:var(--blue)}
+.kpi-card.kgreen .kpi-value{color:var(--green)}
+.kpi-card.kpurple .kpi-value{color:var(--purple)}
+.kpi-card.korange .kpi-value{color:var(--orange)}
+.kpi-card.kred .kpi-value{color:var(--red)}
+
+/* ── Filter bar ── */
+.filter-bar{display:flex;align-items:center;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.filter-chip{padding:4px 11px;border-radius:20px;font-size:12px;cursor:pointer;border:.5px solid var(--border);background:var(--bg2);color:var(--text2);transition:all .15s;font-family:var(--font-body)}
+.filter-chip:hover{border-color:var(--border2);color:var(--text)}
+.filter-chip.active{background:rgba(232,201,106,.12);border-color:rgba(232,201,106,.4);color:var(--accent)}
+
+/* ── Table ── */
+.table-wrap{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r2);overflow:hidden}
+table{width:100%;border-collapse:collapse}
+thead{background:var(--bg3)}
+th{padding:10px 14px;text-align:left;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;font-weight:400;border-bottom:.5px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:.5px solid var(--border);cursor:pointer;transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--bg3)}
+td{padding:11px 14px;font-size:13px;color:var(--text);vertical-align:middle}
+.cmd-num{font-family:var(--font-mono);font-size:12px;color:var(--accent)}
+.client-cell{display:flex;align-items:center;gap:8px}
+.avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0;font-family:var(--font-mono)}
+.small-text{color:var(--text2);font-size:11px}
+.route-cell{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px}
+.route-cell i{font-size:10px;color:var(--text3)}
+.badge-statut{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;white-space:nowrap}
+.badge-statut .dot{width:5px;height:5px;border-radius:50%}
+.s-attente{background:var(--orange-bg);color:var(--orange)}.s-attente .dot{background:var(--orange)}
+.s-confirmee{background:var(--blue-bg);color:var(--blue)}.s-confirmee .dot{background:var(--blue)}
+.s-transit{background:var(--purple-bg);color:var(--purple)}.s-transit .dot{background:var(--purple)}
+.s-livree{background:var(--green-bg);color:var(--green)}.s-livree .dot{background:var(--green)}
+.s-annulee{background:rgba(255,255,255,.05);color:var(--text3)}.s-annulee .dot{background:var(--text3)}
+.badge-retard{background:var(--red-bg);color:var(--red);font-size:11px;padding:2px 7px;border-radius:10px;font-family:var(--font-mono)}
+.prog-bar{height:3px;background:var(--bg4);border-radius:3px;overflow:hidden;width:80px}
+.prog-fill{height:100%;border-radius:3px}
+td.actions{text-align:right;white-space:nowrap}
+.action-btn{width:26px;height:26px;border-radius:6px;background:none;border:.5px solid var(--border);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);transition:all .15s;font-size:13px;margin-left:3px}
+.action-btn:hover{background:var(--bg3);color:var(--text);border-color:var(--border2)}
+
+/* ── Panel Détail ── */
+.panel-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100}
+.panel-overlay.open{display:block}
+.detail-panel{position:fixed;right:0;top:0;bottom:0;width:500px;max-width:100vw;background:var(--bg2);border-left:.5px solid var(--border);z-index:101;overflow-y:auto;transform:translateX(100%);transition:transform .25s cubic-bezier(.16,1,.3,1)}
+.detail-panel.open{transform:translateX(0)}
+.panel-head{padding:18px 22px;border-bottom:.5px solid var(--border);display:flex;align-items:flex-start;gap:10px;position:sticky;top:0;background:var(--bg2);z-index:1}
+.panel-head-info{flex:1}
+.panel-cmd-num{font-family:var(--font-mono);font-size:12px;color:var(--accent)}
+.panel-title{font-family:var(--font-head);font-size:19px;font-weight:500;margin-top:2px}
+.close-btn{width:30px;height:30px;border-radius:7px;background:var(--bg3);border:.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:15px;flex-shrink:0;transition:all .15s}
+.close-btn:hover{background:var(--bg4);color:var(--text)}
+.panel-section{padding:16px 22px;border-bottom:.5px solid var(--border)}
+.panel-section:last-child{border-bottom:none}
+.section-title{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.info-item .lbl{font-size:10px;color:var(--text3);margin-bottom:2px}
+.info-item .val{font-size:13px;color:var(--text)}
+.info-item .val.mono{font-family:var(--font-mono);font-size:11px}
+.prog-big .track{height:5px;background:var(--bg4);border-radius:6px;overflow:hidden}
+.prog-big .fill{height:100%;border-radius:6px}
+.prog-big .labels{display:flex;justify-content:space-between;margin-top:4px}
+.prog-big .labels span{font-size:10px;color:var(--text3);font-family:var(--font-mono)}
+.tl-item{display:flex;gap:10px;margin-bottom:12px}
+.tl-item:last-child{margin-bottom:0}
+.tl-left{display:flex;flex-direction:column;align-items:center}
+.tl-dot{width:7px;height:7px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.tl-line{width:1px;flex:1;margin-top:3px;background:var(--border);min-height:12px}
+.tl-item:last-child .tl-line{display:none}
+.tl-text .ev{font-size:12px;color:var(--text)}
+.tl-text .ts{font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-top:1px}
+.panel-actions{display:flex;gap:7px;padding:14px 22px;border-top:.5px solid var(--border);flex-wrap:wrap}
+
+/* ── Modals ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r2);width:520px;max-width:calc(100vw - 32px);max-height:90vh;overflow-y:auto;padding:22px}
+.modal-title{font-family:var(--font-head);font-size:20px;font-weight:500;margin-bottom:18px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:11px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.form-group input,.form-group select,.form-group textarea{width:100%;background:var(--bg3);border:.5px solid var(--border);border-radius:8px;padding:8px 11px;color:var(--text);font-size:13px;font-family:var(--font-body);outline:none;transition:border .15s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:rgba(232,201,106,.4)}
+.form-group select option{background:var(--bg3)}
+.form-group textarea{resize:vertical;min-height:60px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-actions{display:flex;gap:7px;justify-content:flex-end;margin-top:18px}
+
+/* ── Views ── */
+.view{display:none}
+.view.active{display:block}
+
+/* ── Dashboard ── */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.dash-card{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r2);padding:18px}
+.dash-card h3{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px}
+.retard-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:.5px solid var(--border);font-size:12px}
+.retard-item:last-child{border-bottom:none}
+.retard-num{font-family:var(--font-mono);font-size:11px;color:var(--accent)}
+.retard-days{color:var(--red);font-family:var(--font-mono);font-size:11px;margin-left:auto}
+
+/* ── Bar chart ── */
+.bar-chart-item{margin-bottom:10px}
+.bar-chart-item:last-child{margin-bottom:0}
+.bar-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+.bar-label .cat{color:var(--text2)}
+.bar-label .pct{color:var(--text3);font-family:var(--font-mono)}
+.bar-track{height:5px;background:var(--bg4);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px}
+
+/* ── Cards grid (chauffeurs) ── */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.person-card{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r2);padding:16px 18px;display:flex;gap:12px;align-items:flex-start}
+.person-card .av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0;font-family:var(--font-mono)}
+.person-info .name{font-size:13px;font-weight:500}
+.person-info .sub{font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-top:1px}
+.dispo-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:10px;margin-top:5px}
+.dispo-badge .dot{width:4px;height:4px;border-radius:50%}
+.dispo-yes{background:var(--green-bg);color:var(--green)}.dispo-yes .dot{background:var(--green)}
+.dispo-no{background:var(--orange-bg);color:var(--orange)}.dispo-no .dot{background:var(--orange)}
+
+/* ── Vehicules grid ── */
+.vehicule-card{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r2);padding:16px 18px}
+.vehicule-card .vc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.vehicule-card .vc-title{font-size:14px;font-weight:500}
+.vehicule-card .vc-prix{font-family:var(--font-mono);font-size:13px;color:var(--accent)}
+.vc-detail{font-size:11px;color:var(--text3);margin-bottom:3px}
+.vc-vin{font-family:var(--font-mono);font-size:10px;color:var(--text3)}
+.type-badge{display:inline-flex;padding:2px 8px;border-radius:20px;font-size:10px;background:var(--blue-bg);color:var(--blue);margin-top:6px}
+
+/* ── Stats ── */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.stat-card{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r2);padding:18px}
+.stat-card h3{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px}
+.stat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.stat-row:last-child{margin-bottom:0}
+.stat-row .sname{font-size:12px}
+.stat-row .snum{font-family:var(--font-mono);font-size:12px}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--bg3);border:.5px solid var(--border2);border-radius:10px;padding:11px 16px;font-size:13px;color:var(--text);z-index:999;transform:translateY(20px);opacity:0;transition:all .3s;max-width:300px}
+.toast.show{transform:translateY(0);opacity:1}
+.empty-state{padding:40px 0;text-align:center;color:var(--text3)}
+.empty-state i{font-size:32px;margin-bottom:10px;display:block}
+
+/* retard highlight */
+tr.retard-row td{background:rgba(224,95,95,.04)}
+</style>
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><i class="ti ti-car"></i></div>
+    <div class="logo-title">CarDelivery</div>
+    <div class="logo-sub">Gestion livraisons</div>
+  </div>
+  <div class="sidebar-stats" id="sidebarStats">
+    <div class="mini-stat"><div class="val" id="ss-total">—</div><div class="lbl">Total</div></div>
+    <div class="mini-stat"><div class="val" id="ss-transit">—</div><div class="lbl">Transit</div></div>
+    <div class="mini-stat"><div class="val" id="ss-dispos">—</div><div class="lbl">Dispos</div></div>
+    <div class="mini-stat"><div class="val" id="ss-retards">—</div><div class="lbl">Retards</div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Menu Principal</div>
+    <button class="nav-btn active" onclick="setView('dashboard')" id="nav-dashboard"><i class="ti ti-layout-dashboard"></i>Tableau de bord</button>
+    <button class="nav-btn" onclick="setView('commandes')" id="nav-commandes"><i class="ti ti-package"></i>Commandes<span class="badge" id="nb-cmd">0</span></button>
+    <button class="nav-btn" onclick="setView('clients')" id="nav-clients"><i class="ti ti-users"></i>Clients<span class="badge" id="nb-cli">0</span></button>
+    <button class="nav-btn" onclick="setView('chauffeurs')" id="nav-chauffeurs"><i class="ti ti-steering-wheel"></i>Chauffeurs<span class="badge" id="nb-ch">0</span></button>
+    <button class="nav-btn" onclick="setView('vehicules')" id="nav-vehicules"><i class="ti ti-car"></i>Véhicules<span class="badge" id="nb-veh">0</span></button>
+    <div class="nav-section-label" style="margin-top:8px">Rapports</div>
+    <button class="nav-btn" onclick="setView('statistiques')" id="nav-statistiques"><i class="ti ti-chart-bar"></i>Statistiques</button>
+  </nav>
+</aside>
+
+<!-- ── Main ── -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">Tableau de bord</div>
+    <div class="search-wrap" id="searchWrap" style="display:none">
+      <i class="ti ti-search"></i>
+      <input type="text" placeholder="Rechercher…" id="searchInput" oninput="onSearch()">
+    </div>
+    <button class="btn btn-primary" id="btnCreate" onclick="onBtnCreate()" style="display:none">
+      <i class="ti ti-plus"></i> <span id="btnCreateLabel">Nouvelle commande</span>
+    </button>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ DASHBOARD ══ -->
+    <div class="view active" id="view-dashboard">
+      <div class="kpi-grid" id="dashKpi"></div>
+      <div class="dash-grid">
+        <div class="dash-card">
+          <h3>Commandes récentes</h3>
+          <div id="recentList"></div>
+        </div>
+        <div class="dash-card">
+          <h3><span style="color:var(--red)">⚠</span> Commandes en retard</h3>
+          <div id="retardList"></div>
+        </div>
+      </div>
+      <div class="dash-card" style="margin-top:14px">
+        <h3>Répartition par statut</h3>
+        <div id="dashBars" style="margin-top:4px"></div>
+      </div>
+    </div>
+
+    <!-- ══ COMMANDES ══ -->
+    <div class="view" id="view-commandes">
+      <div class="kpi-grid" id="cmdKpi"></div>
+      <div class="filter-bar">
+        <span style="font-size:11px;color:var(--text3)">Filtrer :</span>
+        <button class="filter-chip active" onclick="setFilter(null,this)">Toutes</button>
+        <button class="filter-chip" onclick="setFilter('EnAttente',this)">En attente</button>
+        <button class="filter-chip" onclick="setFilter('Confirmee',this)">Confirmées</button>
+        <button class="filter-chip" onclick="setFilter('EnTransit',this)">En transit</button>
+        <button class="filter-chip" onclick="setFilter('Livree',this)">Livrées</button>
+        <button class="filter-chip" onclick="setFilter('Annulee',this)">Annulées</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>N° Commande</th><th>Client</th><th>Véhicule</th><th>Trajet</th>
+            <th>Date prévue</th><th>Chauffeur</th><th>Statut</th><th>Retard</th><th>Progr.</th><th></th>
+          </tr></thead>
+          <tbody id="cmdTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ CLIENTS ══ -->
+    <div class="view" id="view-clients">
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>ID</th><th>Nom complet</th><th>Téléphone</th><th>Email</th><th>Adresse</th><th>Commandes</th><th></th>
+          </tr></thead>
+          <tbody id="cliTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ CHAUFFEURS ══ -->
+    <div class="view" id="view-chauffeurs">
+      <div class="cards-grid" id="chGrid"></div>
+    </div>
+
+    <!-- ══ VÉHICULES ══ -->
+    <div class="view" id="view-vehicules">
+      <div class="cards-grid" id="vehGrid"></div>
+    </div>
+
+    <!-- ══ STATISTIQUES ══ -->
+    <div class="view" id="view-statistiques">
+      <div class="kpi-grid" id="statsKpi"></div>
+      <div class="stats-grid" id="statsGrid"></div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ── Panel overlay ── -->
+<div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
+<div class="detail-panel" id="detailPanel">
+  <div class="panel-head">
+    <div class="panel-head-info">
+      <div class="panel-cmd-num" id="pNum"></div>
+      <div class="panel-title" id="pTitle"></div>
+      <div style="margin-top:6px" id="pBadge"></div>
+    </div>
+    <button class="close-btn" onclick="closePanel()"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="panel-section">
+    <div class="section-title">Progression</div>
+    <div class="prog-big">
+      <div class="track"><div class="fill" id="pProgFill"></div></div>
+      <div class="labels"><span id="pL1"></span><span id="pLpct"></span><span id="pL2"></span></div>
+    </div>
+  </div>
+  <div class="panel-section"><div class="section-title">Client</div><div class="info-grid" id="pClient"></div></div>
+  <div class="panel-section"><div class="section-title">Véhicule</div><div class="info-grid" id="pVehicule"></div></div>
+  <div class="panel-section"><div class="section-title">Chauffeur</div><div id="pChauffeur"></div></div>
+  <div class="panel-section"><div class="section-title">Notes</div><div id="pNotes" style="font-size:13px;color:var(--text2)"></div></div>
+  <div class="panel-section"><div class="section-title">Historique</div><div id="pTimeline"></div></div>
+  <div class="panel-actions" id="pActions"></div>
+</div>
+
+<!-- ── Modal Commande ── -->
+<div class="modal-overlay" id="modalCommande">
+  <div class="modal">
+    <div class="modal-title">Nouvelle commande</div>
+    <div class="form-row">
+      <div class="form-group"><label>Client *</label><select id="fClient"></select></div>
+      <div class="form-group"><label>Véhicule *</label><select id="fVehicule"></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Ville de départ *</label><input type="text" id="fDepart" placeholder="ex: Paris"></div>
+      <div class="form-group"><label>Ville d'arrivée *</label><input type="text" id="fArrivee" placeholder="ex: Lyon"></div>
+    </div>
+    <div class="form-group"><label>Date de livraison prévue *</label><input type="date" id="fDateLiv"></div>
+    <div class="form-group"><label>Notes</label><textarea id="fNotes" placeholder="Informations complémentaires…"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modalCommande')">Annuler</button>
+      <button class="btn btn-primary" onclick="creerCommande()"><i class="ti ti-check"></i> Créer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal Client ── -->
+<div class="modal-overlay" id="modalClient">
+  <div class="modal">
+    <div class="modal-title">Nouveau client</div>
+    <div class="form-row">
+      <div class="form-group"><label>Nom *</label><input type="text" id="cNom"></div>
+      <div class="form-group"><label>Prénom *</label><input type="text" id="cPrenom"></div>
+    </div>
+    <div class="form-group"><label>Téléphone</label><input type="text" id="cTel" placeholder="+261 …"></div>
+    <div class="form-group"><label>Email</label><input type="email" id="cEmail"></div>
+    <div class="form-group"><label>Adresse</label><input type="text" id="cAdresse"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modalClient')">Annuler</button>
+      <button class="btn btn-primary" onclick="creerClient()"><i class="ti ti-check"></i> Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal Chauffeur ── -->
+<div class="modal-overlay" id="modalChauffeur">
+  <div class="modal">
+    <div class="modal-title">Nouveau chauffeur</div>
+    <div class="form-row">
+      <div class="form-group"><label>Nom *</label><input type="text" id="chNom"></div>
+      <div class="form-group"><label>Prénom *</label><input type="text" id="chPrenom"></div>
+    </div>
+    <div class="form-group"><label>Téléphone</label><input type="text" id="chTel" placeholder="+261 …"></div>
+    <div class="form-group"><label>N° Permis *</label><input type="text" id="chPermis" placeholder="PERM-XXX"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modalChauffeur')">Annuler</button>
+      <button class="btn btn-primary" onclick="creerChauffeur()"><i class="ti ti-check"></i> Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal Assigner chauffeur ── -->
+<div class="modal-overlay" id="modalAssign">
+  <div class="modal">
+    <div class="modal-title">Assigner un chauffeur</div>
+    <div class="form-group"><label>Chauffeur disponible</label><select id="aChauf"></select></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modalAssign')">Annuler</button>
+      <button class="btn btn-primary" onclick="confirmerAssign()"><i class="ti ti-check"></i> Assigner</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal Annuler commande ── -->
+<div class="modal-overlay" id="modalAnnuler">
+  <div class="modal">
+    <div class="modal-title">Annuler la commande</div>
+    <div class="form-group"><label>Raison de l'annulation *</label><input type="text" id="annulRaison" placeholder="Ex : client indisponible"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modalAnnuler')">Retour</button>
+      <button class="btn btn-primary" style="background:var(--red)" onclick="confirmerAnnulation()"><i class="ti ti-x"></i> Annuler la commande</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+// DATA
+// ════════════════════════════════════════════════════════════════
+let CLIENTS = [
+  {id:1,nom:"Rakoto",prenom:"Jean",tel:"+261 34 12 345 67",email:"j.rakoto@mail.mg",adresse:"Antananarivo"},
+  {id:2,nom:"Rasoa",prenom:"Marie",tel:"+261 33 98 765 43",email:"m.rasoa@mail.mg",adresse:"Toamasina"},
+  {id:3,nom:"Ranorovelo",prenom:"Luc",tel:"+261 32 56 432 10",email:"l.ranorovelo@mail.mg",adresse:"Fianarantsoa"},
+  {id:4,nom:"Ravelo",prenom:"Hanta",tel:"+261 34 77 888 99",email:"h.ravelo@mail.mg",adresse:"Mahajanga"},
+  {id:5,nom:"Andrianaly",prenom:"Paul",tel:"+261 33 11 222 33",email:"p.andrianaly@mail.mg",adresse:"Toliara"},
+  {id:6,nom:"Raharimana",prenom:"Zo",tel:"+261 32 44 555 66",email:"z.raharimana@mail.mg",adresse:"Antsiranana"},
+];
+
+let VEHICULES = [
+  {vin:"JTDBU4EE5AJ001234",marque:"Toyota",modele:"Corolla",annee:2025,couleur:"Gris Métallisé",type:"Berline",prix:28500},
+  {vin:"VF3MCYHYCES123456",marque:"Peugeot",modele:"3008",annee:2024,couleur:"Blanc Nacré",type:"SUV",prix:35200},
+  {vin:"VF15SRBJ0NW987654",marque:"Renault",modele:"Clio",annee:2025,couleur:"Rouge Flamme",type:"Citadine",prix:18900},
+  {vin:"WBA5R1C59LF123789",marque:"BMW",modele:"Série 3",annee:2024,couleur:"Bleu Saphir",type:"Berline",prix:52000},
+  {vin:"VF7RHRFXEML456123",marque:"Citroën",modele:"C5 X",annee:2025,couleur:"Noir Perla",type:"SUV",prix:41300},
+  {vin:"1VWFE21C04W123456",marque:"Volkswagen",modele:"Golf",annee:2025,couleur:"Vert Émeraude",type:"Berline",prix:31500},
+  {vin:"WDCGG8HB4AF123456",marque:"Mercedes",modele:"Classe A",annee:2024,couleur:"Argent Solaire",type:"Berline",prix:44800},
+];
+
+let CHAUFFEURS = [
+  {id:1,nom:"Rabe",prenom:"Andry",tel:"+261 34 11 111 11",permis:"PERM-001",disponible:false},
+  {id:2,nom:"Razafy",prenom:"Solo",tel:"+261 33 22 222 22",permis:"PERM-002",disponible:true},
+  {id:3,nom:"Rakoto",prenom:"Hery",tel:"+261 32 33 333 33",permis:"PERM-003",disponible:true},
+  {id:4,nom:"Razafy",prenom:"Jean",tel:"+261 34 44 444 44",permis:"PERM-004",disponible:false},
+  {id:5,nom:"Rabe",prenom:"Tojo",tel:"+261 33 55 555 55",permis:"PERM-005",disponible:true},
+];
+
+const now = new Date();
+const ago = n => { const d=new Date(now); d.setDate(d.getDate()-n); return d; };
+const later = n => { const d=new Date(now); d.setDate(d.getDate()+n); return d; };
+
+let COMMANDES = [
+  {num:"CMD-2026-0041",clientId:1,vin:"JTDBU4EE5AJ001234",depart:"Paris",arrivee:"Lyon",dateCmd:ago(10),dateLiv:later(4),statut:"EnTransit",chauffeurId:1,notes:"",
+   hist:[{desc:"Commande créée",s:"EnAttente",d:ago(10)},{desc:"Commande confirmée",s:"Confirmee",d:ago(8)},{desc:"Prise en charge par Andry Rabe",s:"EnTransit",d:ago(3)}]},
+  {num:"CMD-2026-0040",clientId:2,vin:"VF3MCYHYCES123456",depart:"Marseille",arrivee:"Bordeaux",dateCmd:ago(13),dateLiv:later(2),statut:"Confirmee",chauffeurId:2,notes:"",
+   hist:[{desc:"Commande créée",s:"EnAttente",d:ago(13)},{desc:"Commande confirmée",s:"Confirmee",d:ago(10)},{desc:"Chauffeur assigné : Solo Razafy",s:"Confirmee",d:ago(9)}]},
+  {num:"CMD-2026-0039",clientId:3,vin:"VF15SRBJ0NW987654",depart:"Nantes",arrivee:"Rennes",dateCmd:ago(18),dateLiv:ago(3),statut:"Livree",chauffeurId:3,notes:"",
+   hist:[{desc:"Commande créée",s:"EnAttente",d:ago(18)},{desc:"Commande confirmée",s:"Confirmee",d:ago(15)},{desc:"Prise en charge par Hery Rakoto",s:"EnTransit",d:ago(9)},{desc:"Véhicule livré au client",s:"Livree",d:ago(4)}]},
+  {num:"CMD-2026-0038",clientId:4,vin:"WBA5R1C59LF123789",depart:"Strasbourg",arrivee:"Paris",dateCmd:ago(20),dateLiv:ago(2),statut:"EnTransit",chauffeurId:4,notes:"Livraison urgente",
+   hist:[{desc:"Commande créée",s:"EnAttente",d:ago(20)},{desc:"Commande confirmée",s:"Confirmee",d:ago(17)},{desc:"Prise en charge par Jean Razafy",s:"EnTransit",d:ago(6)}]},
+  {num:"CMD-2026-0037",clientId:5,vin:"VF7RHRFXEML456123",depart:"Toulouse",arrivee:"Montpellier",dateCmd:ago(23),dateLiv:ago(6),statut:"Livree",chauffeurId:5,notes:"",
+   hist:[{desc:"Commande créée",s:"EnAttente",d:ago(23)},{desc:"Commande confirmée",s:"Confirmee",d:ago(20)},{desc:"Prise en charge par Tojo Rabe",s:"EnTransit",d:ago(12)},{desc:"Véhicule livré au client",s:"Livree",d:ago(7)}]},
+  {num:"CMD-2026-0036",clientId:6,vin:"1VWFE21C04W123456",depart:"Berlin",arrivee:"Nice",dateCmd:ago(7),dateLiv:later(12),statut:"EnAttente",chauffeurId:null,notes:"",
+   hist:[{desc:"Commande créée",s:"EnAttente",d:ago(7)}]},
+  {num:"CMD-2026-0035",clientId:1,vin:"WDCGG8HB4AF123456",depart:"Munich",arrivee:"Genève",dateCmd:ago(28),dateLiv:ago(2),statut:"Annulee",chauffeurId:null,notes:"",
+   hist:[{desc:"Commande créée",s:"EnAttente",d:ago(28)},{desc:"Commande confirmée",s:"Confirmee",d:ago(25)},{desc:"Annulée : client indisponible",s:"Annulee",d:ago(14)}]},
+];
+
+let _nextClientId = 7, _nextChauffeurId = 6, _nextCmdNum = 1042;
+
+// ════════════════════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════════════════════
+const AV_COLORS=[
+  {bg:'rgba(91,156,246,.18)',c:'#5b9cf6'},{bg:'rgba(94,203,135,.18)',c:'#5ecb87'},
+  {bg:'rgba(201,125,245,.18)',c:'#c97df5'},{bg:'rgba(232,201,106,.18)',c:'#e8c96a'},
+  {bg:'rgba(240,145,90,.18)',c:'#f0915a'},{bg:'rgba(224,95,95,.18)',c:'#e05f5f'},
+];
+const avStyle = id => { const a=AV_COLORS[(id-1)%AV_COLORS.length]; return `background:${a.bg};color:${a.c}`; };
+const nomC = p => `${p.prenom} ${p.nom}`;
+const init = p => `${p.prenom[0]}${p.nom[0]}`;
+const getClient = id => CLIENTS.find(c=>c.id===id);
+const getVeh    = vin => VEHICULES.find(v=>v.vin===vin);
+const getChauf  = id => id ? CHAUFFEURS.find(c=>c.id===id) : null;
+const fmtDate   = d => d ? new Date(d).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+const fmtDT     = d => d ? new Date(d).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'})+' '+new Date(d).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}) : '—';
+const joursRetard = c => {
+  if(c.statut==='Livree'||c.statut==='Annulee') return 0;
+  const diff = Math.floor((Date.now()-new Date(c.dateLiv))/(86400000));
+  return diff > 0 ? diff : 0;
+};
+
+const SI = {
+  EnAttente:{label:'En attente',cls:'s-attente',color:'var(--orange)',prog:10},
+  Confirmee:{label:'Confirmée', cls:'s-confirmee',color:'var(--blue)',prog:35},
+  EnTransit:{label:'En transit',cls:'s-transit',color:'var(--purple)',prog:70},
+  Livree:   {label:'Livrée',   cls:'s-livree',color:'var(--green)',prog:100},
+  Annulee:  {label:'Annulée',  cls:'s-annulee',color:'var(--text3)',prog:0},
+};
+const badge = s => { const i=SI[s]||SI.Annulee; return `<span class="badge-statut ${i.cls}"><span class="dot"></span>${i.label}</span>`; };
+const progColor = s => SI[s]?.color||'var(--text3)';
+const prog = s => SI[s]?.prog||0;
+
+// ════════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════════
+let currentView='dashboard', currentFilter=null, openedNum=null, pendingAssignNum=null, pendingAnnulNum=null;
+
+// ════════════════════════════════════════════════════════════════
+// RENDER DASHBOARD
+// ════════════════════════════════════════════════════════════════
+function renderDashboard() {
+  const {total,att,conf,transit,livrees,ann,ca,retards,dispos} = getStats();
+
+  // KPI
+  document.getElementById('dashKpi').innerHTML=`
+    <div class="kpi-card"><div class="kpi-label">Total commandes</div><div class="kpi-value">${total}</div></div>
+    <div class="kpi-card korange"><div class="kpi-label">En attente</div><div class="kpi-value">${att}</div></div>
+    <div class="kpi-card kblue"><div class="kpi-label">Confirmées</div><div class="kpi-value">${conf}</div></div>
+    <div class="kpi-card kpurple"><div class="kpi-label">En transit</div><div class="kpi-value">${transit}</div></div>
+    <div class="kpi-card kgreen"><div class="kpi-label">Livrées</div><div class="kpi-value">${livrees}</div></div>
+    <div class="kpi-card kaccent"><div class="kpi-label">Chiffre d'affaires</div><div class="kpi-value">${Math.round(ca/1000)}k€</div></div>
+  `;
+
+  // Récentes
+  const recents = [...COMMANDES].sort((a,b)=>new Date(b.dateCmd)-new Date(a.dateCmd)).slice(0,6);
+  document.getElementById('recentList').innerHTML = recents.map(c=>{
+    const cl=getClient(c.clientId); const v=getVeh(c.vin);
+    return `<div class="retard-item" style="cursor:pointer" onclick="setView('commandes');openPanel('${c.num}')">
+      <span class="retard-num">${c.num}</span>
+      <span style="font-size:12px;color:var(--text2)">${nomC(cl)} — ${v.marque} ${v.modele}</span>
+      ${badge(c.statut)}
+    </div>`;
+  }).join('') || '<div style="color:var(--text3);font-size:12px">Aucune commande</div>';
+
+  // Retards
+  const retardList = COMMANDES.filter(c=>joursRetard(c)>0);
+  document.getElementById('retardList').innerHTML = retardList.length
+    ? retardList.map(c=>{
+        const cl=getClient(c.clientId);
+        return `<div class="retard-item" style="cursor:pointer" onclick="openPanel('${c.num}')">
+          <span class="retard-num">${c.num}</span>
+          <span style="font-size:12px;color:var(--text2)">${nomC(cl)}</span>
+          <span class="retard-days">+${joursRetard(c)}j</span>
+        </div>`;
+      }).join('')
+    : '<div style="color:var(--text3);font-size:12px">Aucun retard ✓</div>';
+
+  // Barres
+  const max = Math.max(att,conf,transit,livrees,ann,1);
+  const bars = [
+    ['En attente',att,'var(--orange)'],
+    ['Confirmée',conf,'var(--blue)'],
+    ['En transit',transit,'var(--purple)'],
+    ['Livrée',livrees,'var(--green)'],
+    ['Annulée',ann,'var(--text3)'],
+  ];
+  document.getElementById('dashBars').innerHTML = bars.map(([l,n,col])=>`
+    <div class="bar-chart-item">
+      <div class="bar-label"><span class="cat">${l}</span><span class="pct">${n} (${total?Math.round(n/total*100):0}%)</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/max*100)}%;background:${col}"></div></div>
+    </div>`).join('');
+
+  // Sidebar
+  document.getElementById('ss-total').textContent = total;
+  document.getElementById('ss-transit').textContent = transit;
+  document.getElementById('ss-dispos').textContent = dispos;
+  document.getElementById('ss-retards').textContent = retardList.length;
+  document.getElementById('nb-cmd').textContent = total;
+  document.getElementById('nb-cli').textContent = CLIENTS.length;
+  document.getElementById('nb-ch').textContent = CHAUFFEURS.length;
+  document.getElementById('nb-veh').textContent = VEHICULES.length;
+}
+
+// ════════════════════════════════════════════════════════════════
+// RENDER COMMANDES
+// ════════════════════════════════════════════════════════════════
+function filteredCommandes() {
+  let list = COMMANDES;
+  if(currentFilter) list = list.filter(c=>c.statut===currentFilter);
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  if(q) list = list.filter(c=>{
+    const cl=getClient(c.clientId); const v=getVeh(c.vin);
+    return c.num.toLowerCase().includes(q)||nomC(cl).toLowerCase().includes(q)||
+           v.marque.toLowerCase().includes(q)||v.modele.toLowerCase().includes(q);
+  });
+  return [...list].sort((a,b)=>new Date(b.dateCmd)-new Date(a.dateCmd));
+}
+
+function renderCommandes() {
+  const {total,att,transit,livrees,ca} = getStats();
+  document.getElementById('cmdKpi').innerHTML=`
+    <div class="kpi-card"><div class="kpi-label">Total</div><div class="kpi-value">${total}</div></div>
+    <div class="kpi-card korange"><div class="kpi-label">En attente</div><div class="kpi-value">${att}</div></div>
+    <div class="kpi-card kpurple"><div class="kpi-label">En transit</div><div class="kpi-value">${transit}</div></div>
+    <div class="kpi-card kgreen"><div class="kpi-label">Livrées</div><div class="kpi-value">${livrees}</div></div>
+    <div class="kpi-card kaccent"><div class="kpi-label">Chiffre d'affaires</div><div class="kpi-value">${Math.round(ca/1000)}k€</div><div class="kpi-sub">${ca.toLocaleString('fr-FR')} €</div></div>
+    <div class="kpi-card kred"><div class="kpi-label">En retard</div><div class="kpi-value">${COMMANDES.filter(c=>joursRetard(c)>0).length}</div></div>
+  `;
+
+  const list = filteredCommandes();
+  const tbody = document.getElementById('cmdTbody');
+  if(!list.length){ tbody.innerHTML=`<tr><td colspan="10"><div class="empty-state"><i class="ti ti-inbox"></i><p>Aucune commande</p></div></td></tr>`; return; }
+  tbody.innerHTML = list.map(c=>{
+    const cl=getClient(c.clientId); const v=getVeh(c.vin); const ch=getChauf(c.chauffeurId);
+    const retard = joursRetard(c);
+    return `<tr onclick="openPanel('${c.num}')" class="${retard>0?'retard-row':''}">
+      <td><span class="cmd-num">${c.num}</span></td>
+      <td><div class="client-cell"><div class="avatar" style="${avStyle(cl.id)}">${init(cl)}</div>${nomC(cl)}</div></td>
+      <td><div>${v.marque} ${v.modele}</div><div class="small-text">${v.annee} · ${v.couleur}</div></td>
+      <td><div class="route-cell">${c.depart}<i class="ti ti-arrow-right"></i>${c.arrivee}</div></td>
+      <td style="font-family:var(--font-mono);font-size:11px">${fmtDate(c.dateLiv)}</td>
+      <td style="font-size:12px;color:var(--text2)">${ch?nomC(ch):'<span style="color:var(--text3)">—</span>'}</td>
+      <td>${badge(c.statut)}</td>
+      <td>${retard>0?`<span class="badge-retard">+${retard}j</span>`:''}</td>
+      <td><div class="prog-bar"><div class="prog-fill" style="width:${prog(c.statut)}%;background:${progColor(c.statut)}"></div></div></td>
+      <td class="actions" onclick="event.stopPropagation()">
+        <button class="action-btn" style="color:var(--red);border-color:rgba(224,95,95,.2)" title="Supprimer" onclick="supprimerCommande('${c.num}')"><i class="ti ti-trash"></i></button>
+        <button class="action-btn" title="Détail" onclick="openPanel('${c.num}')"><i class="ti ti-arrow-right"></i></button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════════════════════════
+// RENDER CLIENTS
+// ════════════════════════════════════════════════════════════════
+function renderClients() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const list = q ? CLIENTS.filter(c=>nomC(c).toLowerCase().includes(q)||c.email.toLowerCase().includes(q)||c.tel.includes(q)) : CLIENTS;
+  const tbody = document.getElementById('cliTbody');
+  if(!list.length){ tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><i class="ti ti-users"></i><p>Aucun client</p></div></td></tr>`; return; }
+  tbody.innerHTML = list.map(cl=>{
+    const nb = COMMANDES.filter(c=>c.clientId===cl.id).length;
+    return `<tr>
+      <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">#${cl.id}</td>
+      <td><div class="client-cell"><div class="avatar" style="${avStyle(cl.id)}">${init(cl)}</div><strong>${nomC(cl)}</strong></div></td>
+      <td style="font-family:var(--font-mono);font-size:11px">${cl.tel}</td>
+      <td style="font-size:12px;color:var(--text2)">${cl.email}</td>
+      <td style="font-size:12px;color:var(--text2)">${cl.adresse}</td>
+      <td><span style="font-family:var(--font-mono);font-size:12px;color:var(--accent)">${nb}</span></td>
+      <td class="actions">
+        <button class="action-btn" title="Voir commandes" onclick="voirCommandesClient(${cl.id})"><i class="ti ti-package"></i></button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function voirCommandesClient(id) {
+  currentFilter=null;
+  document.getElementById('searchInput').value = nomC(CLIENTS.find(c=>c.id===id));
+  setView('commandes');
+}
+
+// ════════════════════════════════════════════════════════════════
+// RENDER CHAUFFEURS
+// ════════════════════════════════════════════════════════════════
+function renderChauffeurs() {
+  const list = CHAUFFEURS;
+  document.getElementById('chGrid').innerHTML = list.map(ch=>{
+    const mission = COMMANDES.find(c=>c.chauffeurId===ch.id&&c.statut==='EnTransit');
+    const a = AV_COLORS[(ch.id-1)%AV_COLORS.length];
+    return `<div class="person-card">
+      <div class="av" style="background:${a.bg};color:${a.c};width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0;font-family:var(--font-mono)">${init(ch)}</div>
+      <div class="person-info">
+        <div class="name">${nomC(ch)}</div>
+        <div class="sub">${ch.tel}</div>
+        <div class="sub">${ch.permis}</div>
+        ${mission ? `<div class="sub" style="margin-top:4px;color:var(--purple)"><i class="ti ti-truck" style="font-size:11px"></i> ${mission.num}</div>` : ''}
+        <div class="${ch.disponible?'dispo-badge dispo-yes':'dispo-badge dispo-no'}"><span class="dot"></span>${ch.disponible?'Disponible':'En mission'}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════════════════════════
+// RENDER VÉHICULES
+// ════════════════════════════════════════════════════════════════
+function renderVehicules() {
+  document.getElementById('vehGrid').innerHTML = VEHICULES.map(v=>`
+    <div class="vehicule-card">
+      <div class="vc-head">
+        <div class="vc-title">${v.marque} ${v.modele}</div>
+        <div class="vc-prix">${v.prix.toLocaleString('fr-FR')} €</div>
+      </div>
+      <div class="vc-detail">Année : <strong>${v.annee}</strong></div>
+      <div class="vc-detail">Couleur : ${v.couleur}</div>
+      <div class="vc-vin">${v.vin}</div>
+      <span class="type-badge">${v.type}</span>
+    </div>`).join('');
+}
+
+// ════════════════════════════════════════════════════════════════
+// RENDER STATISTIQUES
+// ════════════════════════════════════════════════════════════════
+function renderStats() {
+  const {total,att,conf,transit,livrees,ann,ca} = getStats();
+  document.getElementById('statsKpi').innerHTML=`
+    <div class="kpi-card"><div class="kpi-label">Total</div><div class="kpi-value">${total}</div></div>
+    <div class="kpi-card korange"><div class="kpi-label">En attente</div><div class="kpi-value">${att}</div></div>
+    <div class="kpi-card kblue"><div class="kpi-label">Confirmées</div><div class="kpi-value">${conf}</div></div>
+    <div class="kpi-card kpurple"><div class="kpi-label">En transit</div><div class="kpi-value">${transit}</div></div>
+    <div class="kpi-card kgreen"><div class="kpi-label">Livrées</div><div class="kpi-value">${livrees}</div></div>
+    <div class="kpi-card kaccent"><div class="kpi-label">Chiffre d'affaires</div><div class="kpi-value">${Math.round(ca/1000)}k€</div></div>
+  `;
+  const max = Math.max(att,conf,transit,livrees,ann,1);
+  const bars=[['En attente',att,'var(--orange)'],['Confirmée',conf,'var(--blue)'],['En transit',transit,'var(--purple)'],['Livrée',livrees,'var(--green)'],['Annulée',ann,'var(--text3)']];
+  const dispos=CHAUFFEURS.filter(c=>c.disponible).length;
+  const enMission=CHAUFFEURS.length-dispos;
+  const retards = COMMANDES.filter(c=>joursRetard(c)>0);
+  // type véhicules
+  const typeCount={};
+  COMMANDES.forEach(c=>{ const v=getVeh(c.vin); typeCount[v.type]=(typeCount[v.type]||0)+1; });
+  const maxT=Math.max(...Object.values(typeCount),1);
+
+  document.getElementById('statsGrid').innerHTML=`
+    <div class="stat-card">
+      <h3>Répartition par statut</h3>
+      ${bars.map(([l,n,col])=>`
+        <div class="bar-chart-item">
+          <div class="bar-label"><span class="cat">${l}</span><span class="pct">${n} (${total?Math.round(n/total*100):0}%)</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/max*100)}%;background:${col}"></div></div>
+        </div>`).join('')}
+    </div>
+    <div class="stat-card">
+      <h3>Par type de véhicule</h3>
+      ${Object.entries(typeCount).map(([t,n])=>`
+        <div class="bar-chart-item">
+          <div class="bar-label"><span class="cat">${t}</span><span class="pct">${n}</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/maxT*100)}%;background:var(--accent)"></div></div>
+        </div>`).join('')}
+    </div>
+    <div class="stat-card">
+      <h3>Résumé financier</h3>
+      <div class="stat-row"><span class="sname">Chiffre d'affaires</span><span class="snum" style="color:var(--accent)">${ca.toLocaleString('fr-FR')} €</span></div>
+      <div class="stat-row"><span class="sname">Commandes actives</span><span class="snum">${att+conf+transit}</span></div>
+      <div class="stat-row"><span class="sname">Taux de livraison</span><span class="snum" style="color:var(--green)">${total?Math.round(livrees/total*100):0}%</span></div>
+      <div class="stat-row"><span class="sname">Taux d'annulation</span><span class="snum" style="color:var(--red)">${total?Math.round(ann/total*100):0}%</span></div>
+      <div class="stat-row"><span class="sname">Commandes en retard</span><span class="snum" style="color:var(--red)">${retards.length}</span></div>
+    </div>
+    <div class="stat-card">
+      <h3>Chauffeurs</h3>
+      <div class="stat-row"><span class="sname">Total chauffeurs</span><span class="snum">${CHAUFFEURS.length}</span></div>
+      <div class="stat-row"><span class="sname">Disponibles</span><span class="snum" style="color:var(--green)">${dispos}</span></div>
+      <div class="stat-row"><span class="sname">En mission</span><span class="snum" style="color:var(--orange)">${enMission}</span></div>
+      ${retards.length?`<div style="margin-top:12px"><div style="font-size:10px;color:var(--red);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">⚠ Retards</div>${retards.map(c=>`<div class="stat-row"><span class="sname" style="font-family:var(--font-mono);font-size:11px">${c.num}</span><span class="snum" style="color:var(--red)">+${joursRetard(c)}j</span></div>`).join('')}</div>`:''}
+    </div>
+  `;
+}
+
+// ════════════════════════════════════════════════════════════════
+// PANEL DÉTAIL
+// ════════════════════════════════════════════════════════════════
+function openPanel(num) {
+  const c = COMMANDES.find(x=>x.num===num); if(!c) return;
+  openedNum = num;
+  const cl=getClient(c.clientId), v=getVeh(c.vin), ch=getChauf(c.chauffeurId);
+  const p=prog(c.statut);
+
+  document.getElementById('pNum').textContent = c.num;
+  document.getElementById('pTitle').textContent = `${v.marque} ${v.modele} ${v.annee}`;
+  document.getElementById('pBadge').innerHTML = badge(c.statut) + (joursRetard(c)>0?` <span class="badge-retard">+${joursRetard(c)}j retard</span>`:'');
+  document.getElementById('pProgFill').style.cssText = `width:${p}%;background:${progColor(c.statut)}`;
+  document.getElementById('pL1').textContent=c.depart;
+  document.getElementById('pLpct').textContent=p+'%';
+  document.getElementById('pL2').textContent=c.arrivee;
+
+  document.getElementById('pClient').innerHTML=`
+    <div class="info-item"><div class="lbl">Nom</div><div class="val">${nomC(cl)}</div></div>
+    <div class="info-item"><div class="lbl">Téléphone</div><div class="val mono">${cl.tel}</div></div>
+    <div class="info-item"><div class="lbl">Email</div><div class="val mono" style="font-size:11px">${cl.email}</div></div>
+    <div class="info-item"><div class="lbl">Adresse</div><div class="val">${cl.adresse}</div></div>
+  `;
+  document.getElementById('pVehicule').innerHTML=`
+    <div class="info-item"><div class="lbl">Modèle</div><div class="val">${v.marque} ${v.modele}</div></div>
+    <div class="info-item"><div class="lbl">Année</div><div class="val mono">${v.annee}</div></div>
+    <div class="info-item"><div class="lbl">Couleur</div><div class="val">${v.couleur}</div></div>
+    <div class="info-item"><div class="lbl">Type</div><div class="val">${v.type}</div></div>
+    <div class="info-item"><div class="lbl">Prix</div><div class="val" style="color:var(--accent)">${v.prix.toLocaleString('fr-FR')} €</div></div>
+    <div class="info-item"><div class="lbl">VIN</div><div class="val mono" style="font-size:10px">${v.vin}</div></div>
+  `;
+  document.getElementById('pChauffeur').innerHTML = ch
+    ? `<div class="info-grid">
+        <div class="info-item"><div class="lbl">Nom</div><div class="val">${nomC(ch)}</div></div>
+        <div class="info-item"><div class="lbl">Téléphone</div><div class="val mono">${ch.tel}</div></div>
+        <div class="info-item"><div class="lbl">Permis</div><div class="val mono">${ch.permis}</div></div>
+        <div class="info-item"><div class="lbl">Statut</div><div class="val" style="color:${ch.disponible?'var(--green)':'var(--orange)'}">${ch.disponible?'Disponible':'En mission'}</div></div>
+      </div>`
+    : `<span style="color:var(--text3);font-size:12px">Aucun chauffeur assigné</span>`;
+
+  document.getElementById('pNotes').textContent = c.notes || '—';
+
+  const tlC={EnAttente:'var(--orange)',Confirmee:'var(--blue)',EnTransit:'var(--purple)',Livree:'var(--green)',Annulee:'var(--text3)'};
+  document.getElementById('pTimeline').innerHTML = (c.hist||[]).map(h=>`
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-dot" style="background:${tlC[h.s]||'var(--text3)'}"></div><div class="tl-line"></div></div>
+      <div class="tl-text"><div class="ev">${h.desc}</div><div class="ts">${fmtDT(h.d)}</div></div>
+    </div>`).join('');
+
+  let acts=[];
+  if(c.statut==='EnAttente') acts.push(`<button class="btn btn-primary btn-sm" onclick="avancerStatut('${c.num}')"><i class="ti ti-circle-check"></i> Confirmer</button>`);
+  if(c.statut==='Confirmee'&&!c.chauffeurId) acts.push(`<button class="btn btn-primary btn-sm" onclick="openAssignModal('${c.num}')"><i class="ti ti-steering-wheel"></i> Assigner</button>`);
+  if(c.statut==='Confirmee'&&c.chauffeurId) acts.push(`<button class="btn btn-primary btn-sm" onclick="avancerStatut('${c.num}')"><i class="ti ti-truck"></i> Mettre en transit</button>`);
+  if(c.statut==='EnTransit') acts.push(`<button class="btn btn-primary btn-sm" onclick="avancerStatut('${c.num}')"><i class="ti ti-check"></i> Confirmer livraison</button>`);
+  if(c.statut!=='Livree'&&c.statut!=='Annulee') acts.push(`<button class="btn btn-ghost btn-sm" onclick="openAnnulModal('${c.num}')"><i class="ti ti-x"></i> Annuler</button>`);
+  acts.push(`<button class="btn btn-ghost btn-sm" onclick="supprimerCommande('${c.num}')" style="color:var(--red);border-color:rgba(224,95,95,.25);margin-left:auto"><i class="ti ti-trash"></i> Supprimer</button>`);
+  document.getElementById('pActions').innerHTML = acts.join('');
+
+  document.getElementById('panelOverlay').classList.add('open');
+  document.getElementById('detailPanel').classList.add('open');
+}
+
+function closePanel(){
+  document.getElementById('panelOverlay').classList.remove('open');
+  document.getElementById('detailPanel').classList.remove('open');
+  openedNum=null;
+}
+
+// ════════════════════════════════════════════════════════════════
+// ACTIONS COMMANDES
+// ════════════════════════════════════════════════════════════════
+function avancerStatut(num) {
+  const c=COMMANDES.find(x=>x.num===num); if(!c) return;
+  const msgs={Confirmee:'Commande confirmée.',EnTransit:'Commande mise en transit.',Livree:'Livraison confirmée !'};
+  const next={EnAttente:'Confirmee',Confirmee:'EnTransit',EnTransit:'Livree'};
+  const evts={Confirmee:'Commande confirmée',EnTransit:`Prise en charge par ${getChauf(c.chauffeurId)?.prenom||''} ${getChauf(c.chauffeurId)?.nom||''}`,Livree:'Véhicule livré au client'};
+  if(c.statut==='Confirmee'&&!c.chauffeurId){ showToast('Veuillez d\'abord assigner un chauffeur.'); return; }
+  if(!next[c.statut]) return;
+  const ns=next[c.statut];
+  if(ns==='EnTransit'){ const ch=getChauf(c.chauffeurId); if(ch) ch.disponible=false; }
+  if(ns==='Livree'){ const ch=getChauf(c.chauffeurId); if(ch) ch.disponible=true; }
+  c.statut=ns;
+  c.hist.push({desc:evts[ns],s:ns,d:new Date()});
+  showToast(msgs[ns]);
+  renderAll();
+  if(openedNum===num) openPanel(num);
+}
+
+function supprimerCommande(num) {
+  if(!confirm(`Supprimer définitivement la commande ${num} ?`)) return;
+  const c=COMMANDES.find(x=>x.num===num); if(!c) return;
+  const ch=getChauf(c.chauffeurId); if(ch&&!ch.disponible) ch.disponible=true;
+  COMMANDES=COMMANDES.filter(x=>x.num!==num);
+  closePanel(); renderAll(); showToast(`Commande ${num} supprimée.`);
+}
+
+function openAnnulModal(num) { pendingAnnulNum=num; document.getElementById('annulRaison').value=''; document.getElementById('modalAnnuler').classList.add('open'); }
+function confirmerAnnulation() {
+  const r=document.getElementById('annulRaison').value.trim();
+  if(!r){ showToast('Veuillez indiquer une raison.'); return; }
+  const c=COMMANDES.find(x=>x.num===pendingAnnulNum); if(!c) return;
+  const ch=getChauf(c.chauffeurId); if(ch) ch.disponible=true;
+  c.statut='Annulee'; c.hist.push({desc:`Annulée : ${r}`,s:'Annulee',d:new Date()});
+  closeModal('modalAnnuler'); showToast('Commande annulée.'); renderAll();
+  if(openedNum===pendingAnnulNum) openPanel(pendingAnnulNum);
+}
+
+function openAssignModal(num) {
+  pendingAssignNum=num;
+  const dispos=CHAUFFEURS.filter(c=>c.disponible);
+  document.getElementById('aChauf').innerHTML = dispos.length
+    ? dispos.map(ch=>`<option value="${ch.id}">${nomC(ch)} — ${ch.permis}</option>`).join('')
+    : '<option disabled>Aucun disponible</option>';
+  document.getElementById('modalAssign').classList.add('open');
+}
+function confirmerAssign() {
+  const c=COMMANDES.find(x=>x.num===pendingAssignNum); if(!c) return;
+  const chId=parseInt(document.getElementById('aChauf').value);
+  const ch=getChauf(chId); if(!ch) return;
+  c.chauffeurId=chId;
+  c.hist.push({desc:`Chauffeur assigné : ${nomC(ch)}`,s:c.statut,d:new Date()});
+  showToast(`${nomC(ch)} assigné.`); closeModal('modalAssign'); renderAll();
+  if(openedNum===pendingAssignNum) openPanel(pendingAssignNum);
+}
+
+// ════════════════════════════════════════════════════════════════
+// CRÉER
+// ════════════════════════════════════════════════════════════════
+function openCreateModal() {
+  document.getElementById('fClient').innerHTML = CLIENTS.map(c=>`<option value="${c.id}">${nomC(c)}</option>`).join('');
+  document.getElementById('fVehicule').innerHTML = VEHICULES.map(v=>`<option value="${v.vin}">${v.marque} ${v.modele} ${v.annee} — ${v.prix.toLocaleString('fr-FR')} €</option>`).join('');
+  const d=new Date(); d.setDate(d.getDate()+7);
+  document.getElementById('fDateLiv').value=d.toISOString().split('T')[0];
+  document.getElementById('fDepart').value=''; document.getElementById('fArrivee').value=''; document.getElementById('fNotes').value='';
+  document.getElementById('modalCommande').classList.add('open');
+}
+function creerCommande() {
+  const dep=document.getElementById('fDepart').value.trim(), arr=document.getElementById('fArrivee').value.trim(), dl=document.getElementById('fDateLiv').value;
+  if(!dep||!arr||!dl){ showToast('Veuillez remplir tous les champs obligatoires.'); return; }
+  const num=`CMD-${new Date().getFullYear()}-${_nextCmdNum++}`;
+  const cId=parseInt(document.getElementById('fClient').value);
+  const vin=document.getElementById('fVehicule').value;
+  COMMANDES.unshift({num,clientId:cId,vin,depart:dep,arrivee:arr,dateCmd:new Date(),dateLiv:new Date(dl),statut:'EnAttente',chauffeurId:null,notes:document.getElementById('fNotes').value,hist:[{desc:'Commande créée',s:'EnAttente',d:new Date()}]});
+  closeModal('modalCommande'); renderAll(); showToast(`Commande ${num} créée.`);
+}
+
+function creerClient() {
+  const nom=document.getElementById('cNom').value.trim(), prenom=document.getElementById('cPrenom').value.trim();
+  if(!nom||!prenom){ showToast('Nom et prénom obligatoires.'); return; }
+  CLIENTS.push({id:_nextClientId++,nom,prenom,tel:document.getElementById('cTel').value,email:document.getElementById('cEmail').value,adresse:document.getElementById('cAdresse').value});
+  closeModal('modalClient'); renderAll(); showToast('Client ajouté.');
+  ['cNom','cPrenom','cTel','cEmail','cAdresse'].forEach(id=>document.getElementById(id).value='');
+}
+
+function creerChauffeur() {
+  const nom=document.getElementById('chNom').value.trim(), prenom=document.getElementById('chPrenom').value.trim(), permis=document.getElementById('chPermis').value.trim();
+  if(!nom||!prenom||!permis){ showToast('Nom, prénom et permis obligatoires.'); return; }
+  CHAUFFEURS.push({id:_nextChauffeurId++,nom,prenom,tel:document.getElementById('chTel').value,permis,disponible:true});
+  closeModal('modalChauffeur'); renderAll(); showToast('Chauffeur ajouté.');
+  ['chNom','chPrenom','chTel','chPermis'].forEach(id=>document.getElementById(id).value='');
+}
+
+// ════════════════════════════════════════════════════════════════
+// UTILITAIRES
+// ════════════════════════════════════════════════════════════════
+function getStats() {
+  const total=COMMANDES.length;
+  const att=COMMANDES.filter(c=>c.statut==='EnAttente').length;
+  const conf=COMMANDES.filter(c=>c.statut==='Confirmee').length;
+  const transit=COMMANDES.filter(c=>c.statut==='EnTransit').length;
+  const livrees=COMMANDES.filter(c=>c.statut==='Livree').length;
+  const ann=COMMANDES.filter(c=>c.statut==='Annulee').length;
+  const ca=COMMANDES.filter(c=>c.statut!=='Annulee').reduce((s,c)=>s+getVeh(c.vin).prix,0);
+  const dispos=CHAUFFEURS.filter(c=>c.disponible).length;
+  const retards=COMMANDES.filter(c=>joursRetard(c)>0).length;
+  return {total,att,conf,transit,livrees,ann,ca,dispos,retards};
+}
+
+function setFilter(statut,btn) {
+  currentFilter=statut;
+  document.querySelectorAll('.filter-chip').forEach(e=>e.classList.remove('active'));
+  btn.classList.add('active');
+  renderCommandes();
+}
+
+function onSearch() {
+  if(currentView==='commandes') renderCommandes();
+  else if(currentView==='clients') renderClients();
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function onBtnCreate() {
+  if(currentView==='commandes') openCreateModal();
+  else if(currentView==='clients') document.getElementById('modalClient').classList.add('open');
+  else if(currentView==='chauffeurs') document.getElementById('modalChauffeur').classList.add('open');
+}
+
+function setView(v) {
+  currentView=v;
+  document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById(`view-${v}`).classList.add('active');
+  document.getElementById(`nav-${v}`).classList.add('active');
+
+  const titles={dashboard:'Tableau de bord',commandes:'Commandes',clients:'Clients',chauffeurs:'Chauffeurs',vehicules:'Véhicules',statistiques:'Statistiques'};
+  document.getElementById('topbarTitle').textContent=titles[v]||'';
+
+  const showSearch=['commandes','clients'].includes(v);
+  const showCreate=['commandes','clients','chauffeurs'].includes(v);
+  document.getElementById('searchWrap').style.display=showSearch?'block':'none';
+  document.getElementById('btnCreate').style.display=showCreate?'flex':'none';
+  const createLabels={commandes:'Nouvelle commande',clients:'Nouveau client',chauffeurs:'Nouveau chauffeur'};
+  document.getElementById('btnCreateLabel').textContent=createLabels[v]||'';
+
+  if(v==='commandes') renderCommandes();
+  else if(v==='clients') renderClients();
+  else if(v==='chauffeurs') renderChauffeurs();
+  else if(v==='vehicules') renderVehicules();
+  else if(v==='statistiques') renderStats();
+  else if(v==='dashboard') renderDashboard();
+}
+
+let _toastTimer=null;
+function showToast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  if(_toastTimer) clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+function renderAll(){
+  if(currentView==='dashboard') renderDashboard();
+  else if(currentView==='commandes') renderCommandes();
+  else if(currentView==='clients') renderClients();
+  else if(currentView==='chauffeurs') renderChauffeurs();
+  else if(currentView==='statistiques') renderStats();
+  // toujours màj sidebar
+  const {total,transit,dispos,retards}=getStats();
+  document.getElementById('ss-total').textContent=total;
+  document.getElementById('ss-transit').textContent=transit;
+  document.getElementById('ss-dispos').textContent=dispos;
+  document.getElementById('ss-retards').textContent=retards;
+  document.getElementById('nb-cmd').textContent=total;
+  document.getElementById('nb-cli').textContent=CLIENTS.length;
+  document.getElementById('nb-ch').textContent=CHAUFFEURS.length;
+  document.getElementById('nb-veh').textContent=VEHICULES.length;
+}
+
+// Init
+renderDashboard();
+renderAll();
+</script>
+</body>
+</html>
